@@ -1,6 +1,6 @@
 {
   "name": "worker-inlinify-webpack-plugin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Webpack plugin to transform seperate web worker script reference into inline script.",
   "main": "index.js",
   "scripts": {
