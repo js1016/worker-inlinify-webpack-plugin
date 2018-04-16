@@ -1,0 +1,11 @@
+{
+    "files": [
+        "index.ts"
+    ],
+    "compilerOptions": {
+        "lib": [
+            "scripthost",
+            "es5"
+        ]
+    }
+}
