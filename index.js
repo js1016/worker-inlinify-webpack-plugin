@@ -7,16 +7,18 @@ var WorkerInlinifyWebpackPlugin = /** @class */ (function () {
         compiler.plugin('emit', function (compilation, callback) {
             workerInlinify._webpackAssets = compilation.assets;
             var _loop_1 = function (name) {
-                var source = workerInlinify.inlinify(compilation.assets[name].source());
-                if (source !== compilation.assets[name].source()) {
-                    compilation.assets[name] = {
-                        source: function () {
-                            return source;
-                        },
-                        size: function () {
-                            return source.length;
-                        }
-                    };
+                if (name.toLowerCase().endsWith('.js')) {
+                    var source_1 = workerInlinify.inlinify(compilation.assets[name].source());
+                    if (source_1 !== compilation.assets[name].source()) {
+                        compilation.assets[name] = {
+                            source: function () {
+                                return source_1;
+                            },
+                            size: function () {
+                                return source_1.length;
+                            }
+                        };
+                    }
                 }
             };
             for (var name in compilation.assets) {

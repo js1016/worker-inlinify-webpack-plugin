@@ -5,7 +5,8 @@
     "compilerOptions": {
         "lib": [
             "scripthost",
-            "es5"
+            "es5",
+            "es2015.core"
         ]
     }
 }
