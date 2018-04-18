@@ -1,3 +1,7 @@
+worker-inlinify-webpack-plugin
+==========
+[![NPM version](https://img.shields.io/npm/v/worker-inlinify-webpack-plugin.svg?style=flat)](https://www.npmjs.com/package/worker-inlinify-webpack-plugin) [![NPM downloads](http://img.shields.io/npm/dm/worker-inlinify-webpack-plugin.svg?style=flat)](https://www.npmjs.com/package/worker-inlinify-webpack-plugin) [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+
 worker-inlinify-webpack-plugin is the webpack plugin implementation of [worker-inlinify](https://github.com/js1016/worker-inlinify), which is used to transform separate web worker scripot references into inline script using syntax: `new Worker(window.URL.createObjectURL(new Blob(["/* Web Worker code here */"])))`.
 
 ## Installation
