@@ -1,9 +1,9 @@
 import * as workerInlinify from 'worker-inlinify';
 
-const inlinify = function (compilation) {
+const inlinify = function (compilation, chunks) {
     workerInlinify._webpackAssets = compilation.assets;
     for (let name in compilation.assets) {
-        if (name.toLowerCase().endsWith('.js')) {
+        if (name.toLowerCase().endsWith('.js') && shouldInlinify(name)) {
             let source = workerInlinify.inlinify(compilation.assets[name].source());
             if (source !== compilation.assets[name].source()) {
                 compilation.assets[name] = {
@@ -17,17 +17,31 @@ const inlinify = function (compilation) {
             }
         }
     }
-    debugger;
+    function shouldInlinify(assetName) {
+        for (let i = 0; i < compilation.chunks.length; i++) {
+            for (let j = 0; j < compilation.chunks[i].files.length; j++) {
+                if (compilation.chunks[i].files[j] === assetName) {
+                    return chunks.indexOf(compilation.chunks[i].id) > -1 || chunks.indexOf(compilation.chunks[i].name) > -1;
+                }
+            }
+        }
+        return false;
+    }
 };
 
 class WorkerInlinifyWebpackPlugin {
-
-    constructor() { }
+    chunks: string[] = [];
+    constructor(options) {
+        if (options && 'chunks' in options) {
+            this.chunks = options.chunks;
+        }
+    }
 
     apply(compiler) {
+        let chunks = this.chunks;
         let hooks = compiler.hooks;
         let emit = function (compilation, callback) {
-            inlinify.call(this, compilation);
+            inlinify.call(this, compilation, chunks);
             callback();
         };
         if (hooks) {

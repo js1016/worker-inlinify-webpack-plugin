@@ -29,7 +29,9 @@ module.exports = {
         extensions: ['.js']
     },
     plugins: [
-        new WorkerInlinifyWebpackPlugin()
+        new WorkerInlinifyWebpackPlugin({
+            chunks: ['index']
+        })
     ],
     mode: 'development'
 }

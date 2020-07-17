@@ -20,7 +20,7 @@
   "author": "Sheng Jiang",
   "license": "MIT",
   "dependencies": {
-    "worker-inlinify": "^1.1.2"
+    "worker-inlinify": "^1.1.3"
   },
   "devDependencies": {
     "typescript": "^2.8.1"
