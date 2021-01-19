@@ -1,30 +1,27 @@
-"use strict";
-var workerInlinify = require("worker-inlinify");
+'use strict';
+const { Compilation, sources } = require('webpack');
+
+var workerInlinify = require('worker-inlinify');
 var inlinify = function (compilation, chunks) {
     workerInlinify._webpackAssets = compilation.assets;
-    var _loop_1 = function (name) {
+    for (let name in compilation.assets) {
         if (name.toLowerCase().endsWith('.js') && shouldInlinify(name)) {
-            var source_1 = workerInlinify.inlinify(compilation.assets[name].source());
-            if (source_1 !== compilation.assets[name].source()) {
-                compilation.assets[name] = {
-                    source: function () {
-                        return source_1;
-                    },
-                    size: function () {
-                        return source_1.length;
-                    }
-                };
+            let source = workerInlinify.inlinify(
+                compilation.assets[name].source()
+            );
+            if (source !== compilation.assets[name].source()) {
+                compilation.updateAsset(name, new sources.RawSource(source));
             }
         }
-    };
-    for (var name in compilation.assets) {
-        _loop_1(name);
     }
     function shouldInlinify(assetName) {
-        for (var i = 0; i < compilation.chunks.length; i++) {
-            for (var j = 0; j < compilation.chunks[i].files.length; j++) {
-                if (compilation.chunks[i].files[j] === assetName) {
-                    return chunks.indexOf(compilation.chunks[i].id) > -1 || chunks.indexOf(compilation.chunks[i].name) > -1;
+        for (let chunk of compilation.chunks) {
+            for (let file of chunk.files) {
+                if (file === assetName) {
+                    return (
+                        chunks.indexOf(chunk.id) > -1 ||
+                        chunks.indexOf(chunk.name) > -1
+                    );
                 }
             }
         }
@@ -41,19 +38,24 @@ var WorkerInlinifyWebpackPlugin = /** @class */ (function () {
     WorkerInlinifyWebpackPlugin.prototype.apply = function (compiler) {
         var chunks = this.chunks;
         var hooks = compiler.hooks;
-        var emit = function (compilation, callback) {
-            inlinify.call(this, compilation, chunks);
-            callback();
-        };
         if (hooks) {
             // for new version of webpack
-            hooks.emit.tapAsync('worker-inlinify-webpack-plugin', emit);
-        }
-        else {
+            hooks.thisCompilation.tap('Replace', (compilation) => {
+                compilation.hooks.processAssets.tap(
+                    {
+                        name: 'Replace',
+                        stage: Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE
+                    },
+                    () => {
+                        inlinify(compilation, chunks);
+                    }
+                );
+            });
+        } else {
             // for old version of webpack, use legacy plugin method to hook event
-            compiler.plugin("emit", emit);
+            compiler.plugin('emit', emit);
         }
     };
     return WorkerInlinifyWebpackPlugin;
-}());
+})();
 module.exports = WorkerInlinifyWebpackPlugin;
